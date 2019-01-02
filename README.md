@@ -1,6 +1,8 @@
 # Williams College Course Planner
 David J. Lee and Garett Tok, 2019
 
+Hosted at https://obscure-ocean-95865.herokuapp.com/
+
 A course planner to help Williams undergraduates pick their courses and automatically see how they fit in a schedule. Data obtained from https://catalog.williams.edu/list/  
 
 ## Current Features
