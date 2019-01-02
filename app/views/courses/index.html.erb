@@ -1,0 +1,170 @@
+<div class="row col-xs-9">
+  <h1>Williams College Course Planner</h1>
+</div>
+<div class="row top-buffer col-xs-9">
+  <div class="course-container">
+
+ <% content_tag :div, id: 'data_container', data: { source: @selected_courses } %>
+
+
+  <%= form_tag(courses_path, method: :get) do %>
+    <%= text_field_tag(:search, params[:search]) %>
+    <%= submit_tag("Search") %>
+    <%= radio_button_tag(:semester, 1191, @course_params[:semester] == "1191") %>
+    <%= label_tag(:semester_fall, "Fall") %>
+    <%= radio_button_tag(:semester, 1192, @course_params[:semester] == "1192") %>
+    <%= label_tag(:semester_winter, "Winter") %>
+    <%= radio_button_tag(:semester, 1193, @course_params[:semester] == "1193") %>
+    <%= label_tag(:semester_spring, "Spring") %>
+
+ 
+    <p><%= @courses.count %>
+      <% if @courses.count != 1 %>
+        <%= "courses " %>
+      <% else %>
+        <%= "course "%>
+      <% end %>
+       match your search.
+     </p>
+
+
+    <ol>
+    <% @courses.each do |course| %>
+        <li>
+          <div id = "course-header">
+            <%= link_to course.course_name_with_number,
+              "https://catalog.williams.edu/" + course.subject + "/detail/?strm=" + course.strm.to_s + "&cn=" + course.catalog_nbr.to_s + "&crsid=" + course.crse_id.to_s.rjust(6, "0")
+            %>
+          </div>
+          <div class = "course-body">
+            <p id = "course-description">
+              <%= course.wms_short_descr %>
+            </p>
+            <p id = "instructors">
+              Instructors:
+              <% for i in 0..(course.course_instructors.count - 1) %>
+                <% if i % 2 == 0 %>
+                  <%= link_to course.course_instructors[i], course.course_instructors[i+1] %>
+                <% end %>
+                <% if i < course.course_instructors.count - 2 && i % 2 == 0 %>
+                  <%= "," =%>
+                <% end %>
+              <% end %>
+            </p>
+            <p id = "prerequisites">
+              Pre-Reqs: <%= course.wms_prereqs %>
+            </p>
+            <p id = "course-distributions">
+              Distributions: <%= course.course_distributions %>
+            </p>
+            <div id = "add-course">
+                <% if @selected_courses %>
+                  <% if @selected_courses.include? course.class_nbr.to_s %>
+                    <%= button_tag "Remove", :class => 'btn-xs btn-warning btn', value: course.class_nbr, type: :submit %>
+                  <% else %>
+                    <%= button_tag "Add", :class => 'btn-xs btn-default btn', value: course.class_nbr, type: :submit %>
+                  <% end %>
+                <% else %>
+                  <%= button_tag "Add", :class => 'btn-xs btn-default btn', value: course.class_nbr, type: :submit %>
+                  <% end %>
+              <%= course.course_time%>
+            </div>
+          </div>
+        </li>
+
+    <% end %>
+    </ol>
+
+  </div>
+</div>
+
+
+
+<div class = "col-xs-3" id = "stick">
+
+    <h4>Weekly Schedule</h4>
+    <div>
+      <table class = "table top-buffer" id = "calendar">
+        <thead>
+          <tr>
+            <th scope = "col"></th>
+            <th scope = "col">M</th>
+            <th scope = "col">T</th>
+            <th scope = "col">W</th>
+            <th scope = "col">R</th>
+            <th scope = "col">F</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr>
+            <td>
+              <table style = "width:100%">
+                <!-- 15 hours -->
+                <% (8..22).each do |h| %>
+                  <tr>
+                    <th scope = "row" style = "height:32px;border-top:1px solid #ddd" ><%= h %></th>
+                  </tr>
+                <% end %>
+              </table>
+            </td>
+
+            <% (0..4).each do |d| %>
+              <td>
+                <table class = "table" >
+                  <% (0..59).each do |slot| %>
+                    <tr>
+
+                      <% if @selected_courses_full && @selected_courses_full.count > 0%>
+
+                        <% (0..@selected_courses_full.count - 1).each do |i| %>
+
+                          <% if @selected_courses_full[i].check(d, slot)%>
+                            <td style="background-color:#eee;height:8px"></td>
+                            <% break %>
+                          <% elsif i == (@selected_courses_full.count - 1) %>
+                            <td style="background-color:#fff;height:8px"></td>
+                          <% end %>
+                        <% end %>
+
+                      <% else %>
+                          <td style = "background-color:#fff;height:8px"></td>
+                      <% end %>
+                    </tr>
+                  <% end %>
+                </table>
+              </td>
+            <% end %>
+
+
+          </tr>
+
+
+
+
+        </tbody>
+      </table>
+    </div>
+
+    <h5>Selected Courses - Click to Remove</h5>
+    <ol>
+      <% if @selected_courses_full%>
+        <% @selected_courses_full.each do |course| %>
+          <% if course != nil %>
+            <li style = "padding-bottom:5px">
+              <div id = "selected-course-title">
+                <% selected_course_string =""%>
+                <% selected_course_string = course.course_name_with_number + ": " + course.course_only_time%>
+                <%= button_tag "#{selected_course_string}", :id => 'selected-course-button', :class => 'btn-xs btn-default btn', value: course.class_nbr, type: :submit %>
+              </div>
+            </li>
+          <% end %>
+        <% end %>
+      <% end %>
+    </ol>
+
+
+</div>
+
+
+<% end %>

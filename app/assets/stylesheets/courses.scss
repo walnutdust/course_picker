@@ -1,0 +1,31 @@
+// Place all the styles related to the courses controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+$normal-spacing: 20px;
+
+.course-container li {
+  margin-bottom: $normal-spacing;
+  border-bottom: 1px solid #eee;
+  padding-bottom: $normal-spacing;
+}
+
+.top-buffer {
+  margin-top: 20px;
+}
+
+#stick{
+  position: fixed;
+  top: 50px;
+  right: 40px;
+}
+
+#calendar tr, #calendar td, #calendar{
+  padding: 0;
+  margin: 0;
+}
+
+#selected-course-button{
+  white-space: normal;
+  text-align: left;
+}
